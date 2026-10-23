@@ -31,5 +31,10 @@ namespace Products
         /// QR-код товара
         /// </summary>
         public IQRController QRCode { get; }
+
+        /// <summary>
+        /// Информация о товаре
+        /// </summary>
+        public string Info { get; set; }
     }
 }
