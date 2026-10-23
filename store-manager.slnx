@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Products/Products.csproj" Id="845833a9-54f4-47f0-b9bb-96b4aca9d137" />
+  <Project Path="QR/QR.csproj" />
+  <Project Path="store-manager/store-manager.csproj" />
+</Solution>
