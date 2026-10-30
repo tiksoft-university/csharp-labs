@@ -7,14 +7,17 @@ namespace StoreManager
     {
         static void Main(string[] args)
         {
-            IQRController.OUTPUT_MODE = OutputMode.Full;
-            var qr = new PackageQRController();            
-            
-            while (true)
+            IProduct prod = new PowerTool(1, "Интерскол У350", 10000, "Очень крутой инструмент, позволяющий делать отверстия");
+            IProduct packagedProd = new Package(new PowerTool(1, "Интерскол У310", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));
+
+            IProduct[] products = [prod, packagedProd];
+
+            foreach (var product in products)
             {
-                Console.WriteLine("Input the text for get QR: ");
-                qr.Text = Console.ReadLine();             
-                Console.WriteLine(qr);
+                Console.WriteLine(product);
+                product.Id++;
+                product.Price++;
+                Console.WriteLine(product);
             }
         }
     }

@@ -5,22 +5,22 @@
         /// <summary>
         /// Версия QR-кода
         /// </summary>
-        private Version version = Version.V1;
+        private Version _version = Version.V1;
 
         /// <summary>
         /// Режим кодирования
         /// </summary>
-        private EncodingMode encodingMode = EncodingMode.Binary;
+        private EncodingMode _encodingMode = EncodingMode.Binary;
 
         /// <summary>
         /// Уровень коррекции ошибки. Может быть null
         /// </summary>
-        private ErrorCorrectionLevel? errorCorrectionLevel = ErrorCorrectionLevel.M;
+        private ErrorCorrectionLevel? _errorCorrectionLevel = ErrorCorrectionLevel.M;
         
         /// <summary>
         /// Маска QR-кода. Может быть null
         /// </summary>
-        private Mask? mask = Mask.M_001;
+        private Mask? _mask = Mask.M_001;
 
         /// <summary>
         /// Строковое представление QR-кода
@@ -40,10 +40,10 @@
                 _text = value;
                 Code = QrBuilder.ToQrCode(
                     _text, 
-                    ref this.version, 
-                    ref this.encodingMode, 
-                    ref this.errorCorrectionLevel, 
-                    ref this.mask
+                    ref this._version, 
+                    ref this._encodingMode, 
+                    ref this._errorCorrectionLevel, 
+                    ref this._mask
                 );
             }                           
         }
@@ -51,7 +51,7 @@
         /// <summary>
         /// Получение информации о QR-коде
         /// </summary>        
-        public string GetInfoByQR() => $"{this.version}, {this.mask}, {this.errorCorrectionLevel}";
+        public string GetInfoByQR() => $"{this._version}, {this._mask}, {this._errorCorrectionLevel}";
 
         /// <summary>
         /// Вывод информации
@@ -59,7 +59,7 @@
         public override string ToString() => IQRController.OUTPUT_MODE switch
         {
             OutputMode.Text => Text,
-            OutputMode.Full => $"{this.Text}\n" + $"{this.GetInfoByQR()}\n" + $"{this.Code}",
+            OutputMode.Full => $"{this.Text}\n" + $"{this.Code}",
             _ => Code
         };
 

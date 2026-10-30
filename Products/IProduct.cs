@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Products
 {
-    internal interface IProduct
+    public interface IProduct
     {
         /// <summary>
         /// Идентификатор товара
@@ -15,17 +15,17 @@ namespace Products
         /// <summary>
         /// Имя товара
         /// </summary>
-        public int Name { get; }
+        public string Name { get; }
        
         /// <summary>
         /// Цена товара
         /// </summary>
-        public int Price { get; }
+        public decimal Price { get; set; }
 
         /// <summary>
         /// Тип товара
         /// </summary>
-        public int Type { get; }
+        public string Type { get; }
 
         /// <summary>
         /// QR-код товара
@@ -35,6 +35,6 @@ namespace Products
         /// <summary>
         /// Информация о товаре
         /// </summary>
-        public string Info { get; set; }
+        public string Info { get; }
     }
 }

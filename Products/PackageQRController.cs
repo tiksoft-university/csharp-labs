@@ -9,20 +9,20 @@ namespace Products
         /// <summary>
         /// Базовый QR
         /// </summary>
-        private readonly IQRController baseQR = new QRController();
+        private readonly IQRController _baseQR = new QRController();
 
         /// <summary>
         /// Передача и получение значения в базовый QR
         /// </summary>
         public string Text {
-            get => baseQR.Text;
-            set => baseQR.Text = value;
+            get => _baseQR.Text;
+            set => _baseQR.Text = value;
         }
         
         /// <summary>
         /// Получение кода из базового QR
         /// </summary>
-        public string Code { get => baseQR.Code; }
+        public string Code { get => _baseQR.Code; }
 
         /// <summary>
         /// Вывод информации QR
@@ -30,7 +30,7 @@ namespace Products
         public override string ToString() => IQRController.OUTPUT_MODE switch
         {
             OutputMode.Text => $"*{Text}*",
-            OutputMode.Full => $"*{this.Text}*\n" + $"{(baseQR as QRController).GetInfoByQR()}\n" + $"{this.Code}",
+            OutputMode.Full => $"*{this.Text}*\n" + $"{this.Code}",
             _ => Code
         };
     }
