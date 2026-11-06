@@ -28,8 +28,11 @@ namespace Assortment
             Id = id;
         }
 
-        /// <summary>Перегрузка оператора</summary>
+        /// <summary>Перегрузка оператора неявного преобразования из числа</summary>
         public static implicit operator Assortment<T>(int size) => new Assortment<T>(1, size);
+
+        /// <summary>Перегрузка оператора неявного преобразования из кортежа</summary>
+        public static implicit operator Assortment<T>((int id, int size) args) => new Assortment<T>(args.id, args.size);
 
         /// <summary>Индексатор получения</summary>
         public virtual T? this[int index] {
