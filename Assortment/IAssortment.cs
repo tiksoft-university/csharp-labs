@@ -21,7 +21,7 @@
         public bool AddAt(int index, T item);
 
         /// <summary> Получение товара по индексу</summary>
-        public T? At(int index);
+        public void Swap(int first, int second);
 
         /// <summary>Замена по индексу</summary>
         public bool Replace(int index, T item);

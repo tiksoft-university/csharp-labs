@@ -5,107 +5,146 @@ using System.Text;
 
 namespace Assortment
 {
-    public class Assortment<T> : IAssortment<T> where T : class, IProduct
-    {
+    public class Assortment<T> : IAssortment<T> where T : class, IProduct {
 
         /// <summary>Идентификатор склада</summary>
-        public virtual int Id { get; set; }
+        private int _id;
+        public virtual int Id {
+            get => _id;
+            set {
+                _id = value;
+                UpdateAllCodes(); 
+            }
+        }
 
         /// <summary>Товары склада</summary>
         private T[] _items;
 
-        /// <summary>Размер склада</summary>
-        public int Size { get => _items.Length; }
 
         /// <summary>Защищенный конструктор</summary>
         protected Assortment(int id, int size) {
             if (size <= 0) return;
-            Id = id;           
-            _items = new T[size];            
+            _items = new T[size];
+            Id = id;
         }
 
-        /// <summary>Перегрузка оператора присваивания</summary>
-        public static implicit operator Assortment<T>(int size)
-        {
-            return new Assortment<T>(1, size);
-        }
+        /// <summary>Перегрузка оператора</summary>
+        public static implicit operator Assortment<T>(int size) => new Assortment<T>(1, size);
 
         /// <summary>Индексатор получения</summary>
         public virtual T? this[int index] {
             get
-            {   
-                if(IsOutOfArray(index) || IsEmpty() || _items[index] == null) return null;
-                
+            {
+                if (IsOutOfArray(index) || _items[index] == null) return null;
+
                 T? item = _items[index]; _items[index] = null;
 
-                return item;                
+                return item;
             }
             set
             {
                 // Если индекс выходит за пределы
-                if (IsOutOfArray(index) || _items[index] != null || IsEmpty()) return;
-                _items[index] = value;              
-            } 
+                if (IsOutOfArray(index) || _items[index] != null) return;
+                _items[index] = value;
+                UpdateAllCodes();
+            }
         }
 
-        /// <summary>Утилита: Проверка на пустоту</summary>
-        protected bool IsEmpty() => _items.Length == 0;
+        /// <summary>Размер склада</summary>
+        public int Size { get => _items.Length; }
 
-        /// <summary></summary>
+        /// <summary>Проверка, что индекс выходит за границы массива</summary>
         protected bool IsOutOfArray(int index) => index < 0 || index > _items.Length - 1;
 
         /// <summary>Добавление товара в первый свободный слот</summary>
-        bool IAssortment<T>.Add(T item)
+        public bool Add(T item)
         {
             var firstIndex = -1;
 
             for (int i = 0; i < Size; i++)
             {
-                if (_items[i] == null) firstIndex = i; 
-                break;               
+                if (_items[i] == null)
+                {
+                    firstIndex = i; break;
+                }
+
             }
 
-            if (firstIndex == -1) return false;            
+            if (firstIndex == -1) return false;
             this[firstIndex] = item; return true;
         }
 
-        bool IAssortment<T>.AddAt(int index, T item)
+        /// <summary>Добавление товара по конкретному индексу</summary>
+        public bool AddAt(int index, T item)
         {
-            if (IsOutOfArray(index)) return false;
-            if (_items[index] != null) return false;
-
-            if (this[index] == null) return false;
+            if (IsOutOfArray(index) || _items[index] != null) return false;
             this[index] = item; return true;
         }
 
-        T? IAssortment<T>.At(int index)
+
+        /// <summary>Поменять местами</summary>
+        public void Swap(int first, int second)
         {
-            throw new NotImplementedException();
+            if (IsOutOfArray(first) || IsOutOfArray(second) || first == second) return;
+
+            var firstProd = this[first];
+            var secondProd = this[second];
+
+            this[first] = secondProd;
+            this[second] = firstProd;
         }
 
-        T? IAssortment<T>.Find(int id)
+        /// <summary>Замена</summary>
+        public bool Replace(int index, T item)
         {
-            throw new NotImplementedException();
+            if (IsOutOfArray(index) || this[index] == item) return false;
+            this[index] = item; return true;
         }
 
-        T? IAssortment<T>.Find(string name)
-        {
-            throw new NotImplementedException();
+        /// <summary>Поиск товара по идентификатору</summary>
+        public T? Find(int id) => _items.FirstOrDefault(item => item?.Id == id, null);
+
+        /// <summary>Поиск товара по имени</summary>
+        public T? Find(string name) => _items.FirstOrDefault(item => item?.Name == name, null);
+
+        /// <summary>Обновление кодов всех товаров склада</summary>
+        private void UpdateAllCodes() {
+            for (int i = 0; i < Size; i++) {
+                if (_items[i] != null) _items[i]!.SetAssortmentCode(this, i);
+            };
         }
 
-        bool IAssortment<T>.Replace(int index, T item)
-        {
-            throw new NotImplementedException();
+        /// <summary>Сортировка по возрастанию Id</summary>
+        public void SortById() {
+            _items = _items.OrderBy(x => x == null).ThenBy(x => x?.Id).ToArray();
+            UpdateAllCodes();
         }
 
-        void IAssortment<T>.SortById()
+        /// <summary>Сортировка по возрастанию Name</summary>
+        public void SortByName()
         {
-            throw new NotImplementedException();
+            _items = _items.OrderBy(x => x == null).ThenBy(x => x?.Name).ToArray();
+            UpdateAllCodes();
         }
 
-        void IAssortment<T>.SortByName()
+        /// <summary>Переопределенное приведение к строке</summary>
+        public override string ToString()
         {
-            throw new NotImplementedException();
+            StringBuilder result = new StringBuilder();
+            result.Append($"\n ------------------ ASSORTMENT {this._id} ------------------ : \n\n");
+
+            foreach (var item in _items) {
+                if(item == null)
+                {
+                    result.Append("null \n");
+                    
+                } else
+                {
+                    result.Append($"{item.ToString()}");
+                }                
+            }
+
+            return $"{result}\n";
         }
     }
 }
