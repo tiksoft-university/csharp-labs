@@ -1,6 +1,4 @@
 ﻿using Products;
-using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Assortment
@@ -47,7 +45,7 @@ namespace Assortment
             set
             {
                 // Если индекс выходит за пределы
-                if (IsOutOfArray(index) || _items[index] != null) return;
+                if (IsOutOfArray(index) || this[index] != null || _items[index] == value || value is null) return;
                 _items[index] = value;
                 UpdateAllCodes();
             }
@@ -105,26 +103,26 @@ namespace Assortment
         }
 
         /// <summary>Поиск товара по идентификатору</summary>
-        public T? Find(int id) => _items.FirstOrDefault(item => item?.Id == id, null);
+        public virtual T? Find(int id) => _items.FirstOrDefault(item => item?.Id == id, null);
 
         /// <summary>Поиск товара по имени</summary>
-        public T? Find(string name) => _items.FirstOrDefault(item => item?.Name == name, null);
+        public virtual T? Find(string name) => _items.FirstOrDefault(item => item?.Name == name, null);
 
         /// <summary>Обновление кодов всех товаров склада</summary>
         private void UpdateAllCodes() {
             for (int i = 0; i < Size; i++) {
-                if (_items[i] != null) _items[i]!.SetAssortmentCode(this, i);
+                if (_items[i] != null) _items[i]!.SetAssortmentCode(this);
             };
         }
 
         /// <summary>Сортировка по возрастанию Id</summary>
-        public void SortById() {
+        public virtual void SortById() {
             _items = _items.OrderBy(x => x == null).ThenBy(x => x?.Id).ToArray();
             UpdateAllCodes();
         }
 
         /// <summary>Сортировка по возрастанию Name</summary>
-        public void SortByName()
+        public virtual void SortByName()
         {
             _items = _items.OrderBy(x => x == null).ThenBy(x => x?.Name).ToArray();
             UpdateAllCodes();
