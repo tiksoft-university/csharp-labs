@@ -12,6 +12,8 @@
     <ProjectReference Include="..\Assortment\Assortment.csproj" />
     <ProjectReference Include="..\Products\Products.csproj" />
     <ProjectReference Include="..\QR\QR.csproj" />
+    <ProjectReference Include="..\SmartStorage\SmartStorage.csproj" />
+    <ProjectReference Include="..\UI\UI.csproj" />
   </ItemGroup>
 
 </Project>

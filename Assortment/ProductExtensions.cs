@@ -1,7 +1,4 @@
 ﻿using Products;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Assortment
 {
@@ -24,8 +21,8 @@ namespace Assortment
             where T : class, IProduct
         {
             if (product == null) return;
-
-            var index = 0;
+            
+            var index = assortment.IndexOf(product);
 
             product.SetAssortmentCode(assortment.Id, index);
         }

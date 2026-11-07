@@ -26,6 +26,9 @@
         /// <summary>Замена по индексу</summary>
         public bool Replace(int index, T item);
 
+        /// <summary>Замена по индексу</summary>
+        public int IndexOf(T item);
+
         /// <summary>Поиск по идентификатору</summary>
         public T? Find(int id);
         

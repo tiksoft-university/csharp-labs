@@ -105,6 +105,24 @@ namespace Assortment
         /// <summary>Поиск товара по идентификатору</summary>
         public virtual T? Find(int id) => _items.FirstOrDefault(item => item?.Id == id, null);
 
+        public int IndexOf(T item)
+        {
+            int resultIndex = -1;
+
+            for (int i = 0; i < Size; i++)
+            {
+                T getted = this[i];
+                this[i] = getted;
+
+                if (getted == item) {
+                    resultIndex = i;
+                    break;
+                }
+            }
+
+            return resultIndex;
+        }
+
         /// <summary>Поиск товара по имени</summary>
         public virtual T? Find(string name) => _items.FirstOrDefault(item => item?.Name == name, null);
 

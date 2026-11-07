@@ -82,7 +82,7 @@ namespace Products
         public abstract string Info { get; }
 
 
-        public sealed override string ToString()
+        public override string ToString()
         {
             return $"{Type} {Name} {Price}руб\n{Info}\n{QRCode}";
         }

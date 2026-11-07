@@ -1,7 +1,9 @@
 ﻿using Assortment;
 using Products;
 using QR;
+using SmartStorage;
 using System.Runtime.CompilerServices;
+using UI;
 
 namespace StoreManager
 {
@@ -9,38 +11,22 @@ namespace StoreManager
     {
         static void Main(string[] args)
         {
-            IProduct prod = new PowerTool(7, "Интерскол У350", 10000, "Очень крутой инструмент, позволяющий делать отверстия");
-            IProduct packagedProd = new Package(new PowerTool(5, "Интерскол У310", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));         
-            IProduct pack = new Package(new PowerTool(4, "Интерскол sУ310", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));         
 
-            IAssortment<IProduct> storage = (Assortment<IProduct>)10;
-            IAssortment<IProduct> second = (Assortment<IProduct>)(7, 5);
+            Window.Run();
+            //ISmartProduct prod = new SmartProduct(7, "Интерскол У350", 10000, "Очень крутой инструмент, позволяющий делать отверстия");
+            //IProduct packagedProd = new Package(new PowerTool(5, "Интерскол У310", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));         
+            //SmartPackage pack = new SmartPackage(new SmartProduct(4, "Интерскол sУ310", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));         
 
-            storage.Add(prod);
-            storage.AddAt(5, packagedProd);
+            //SmartAssortment<ISmartProduct> st = (1, 3);
 
-            Console.WriteLine(storage);
-            storage.SortById();
+            //st[2] = pack;
 
-            Console.WriteLine(storage);
-
-            second[0] = storage[0];
-
-            Console.WriteLine(second);
-            Console.WriteLine(packagedProd);
-            second.Replace(0, pack);
-            second.Replace(0, packagedProd);
-
-            Console.WriteLine(second);
+            //Console.WriteLine(st);
+            //st.Id = 10;
+            //st.SortById();
+            //Console.WriteLine(st);
 
 
-            IAssortment<IProduct> st = new SmartAssortment<IProduct>(4, 3);
-            st[2] = pack;
-
-            Console.WriteLine(st);
-            st.Id = 10;
-            st.SortById();
-            Console.WriteLine(st);
             //Console.WriteLine(st.Find(4));
 
 
