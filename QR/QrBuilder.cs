@@ -1052,7 +1052,7 @@ namespace QR
             }
                 sb.AppendLine();
             }
-            return sb.ToString();
+            return sb.ToString().Replace("\r", "");
         }
 
         /// <summary> 
