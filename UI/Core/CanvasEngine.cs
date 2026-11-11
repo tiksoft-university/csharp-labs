@@ -37,13 +37,7 @@ namespace UI.Core
             {
                 for (int x = 0; x < Width; x++)
                 {                    
-                    SetCell(
-                        x, 
-                        y, 
-                        ' ', 
-                        ConsoleColor.White, 
-                        ConsoleColor.Black
-                    );
+                    SetCell(x, y, ' ', ConsoleColor.White, ConsoleColor.Black);
                 }                
             }
         }
@@ -135,7 +129,7 @@ namespace UI.Core
 
             if (title != "")
             {
-                WriteText(x + 3, y, title);
+                WriteText(x + 3, y, title, ConsoleColor.Black, ConsoleColor.Cyan);
             }                        
         }
                

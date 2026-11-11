@@ -81,10 +81,9 @@ namespace Products
         /// </summary>
         public abstract string Info { get; }
 
-
         public override string ToString()
         {
-            return $"{Type} {Name} {Price}руб\n{Info}\n{QRCode}";
+            return $"{Type} {Name} {Price}руб\nОписание: {Info}\n{QRCode}";
         }
     }
 }

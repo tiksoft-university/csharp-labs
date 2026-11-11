@@ -2,6 +2,7 @@
 using Products;
 using QR;
 using SmartStorage;
+using store_manager.Model;
 using store_manager.UI;
 using System.Runtime.CompilerServices;
 using System.Security.Principal;
@@ -21,41 +22,38 @@ namespace StoreManager
             IProduct packagedProd_3 = new Package(new PowerTool(7, "Интерскол У312", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));
 
             IProduct[] arr = [packagedProd_1, packagedProd_2, packagedProd_3];
+                
             int[] list = [1, 2, 3];
 
             int sas = 1;
             bool is_Adding = !false;
+
+            /* ###### STATE START ######*/
+
+
+            AssortmentsSlice assortmentsSlice = new();
+
+
             /* ###### STATE END ###### */
+
 
 
             /* ###### COMPONENTS START ######*/
             var canv = new CanvasEngine();
-            AssortmentsBar assortmentsBar = new(0, 0, 100, 21);
-           
+            AssortmentsBar assortmentsBar = new(0, 0, 100, 21, assortmentsSlice);
+
+            /* ###### COMPONENTS END ######*/
+
             while (true)
-            {
-                if (Console.KeyAvailable)
-                {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true);
-
-                    switch (keyInfo.Key)
-                    {
-                        case ConsoleKey.A:
-                            sas--;
-                            break;
-                        case ConsoleKey.D:
-                            sas++;
-                            break;
-                    }
-                }
-
+            {                
                 // RENDER СЕКЦИИ СКЛАДОВ
                 assortmentsBar.Render(canv);
 
-                if(is_Adding) {
-                    // СЕКЦИЯ СКЛАДОВ
+                // СЕКЦИЯ СКЛАДОВ
+                if (is_Adding) {
+                    
                     canv.DrawBox(0, Units.Vh(21) + 1, Units.Vw(70), Units.Vh(80) - 1, "ТЕКУЩИЙ ЭЛЕМЕНТ");
-                    canv.WriteText(3, Units.Vh(21) + 3, arr[sas].ToString());
+                    canv.WriteText(3, Units.Vh(21) + 3, assortmentsSlice.GetSelectedProductString());
                 }
                 
                 canv.DrawBox(Units.Vw(70) + 1, Units.Vh(21) + 1, Units.Vw(65), Units.Vh(80) - 1, "ИНСТРУКЦИЯ");              

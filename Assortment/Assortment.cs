@@ -47,7 +47,7 @@ namespace Assortment
                 // Если индекс выходит за пределы
                 if (IsOutOfArray(index) || this[index] != null || _items[index] == value || value is null) return;
                 _items[index] = value;
-                UpdateAllCodes();
+                //UpdateAllCodes();
             }
         }
 
@@ -144,6 +144,24 @@ namespace Assortment
         {
             _items = _items.OrderBy(x => x == null).ThenBy(x => x?.Name).ToArray();
             UpdateAllCodes();
+        }
+
+        public List<int?> GetProductsIds()
+        {
+            List<int?> result = [];
+
+            foreach (var product in _items)
+            {
+                if(product is null)
+                {
+                    result.Add(null);
+                    continue;
+                }
+
+                result.Add(product.Id);
+            }
+
+            return result;
         }
 
         /// <summary>Переопределенное приведение к строке</summary>

@@ -41,5 +41,7 @@
         /// <summary>Сортировка по возрастанию по наименованию</summary>
         public void SortByName();
 
+        /// <summary>Получить список идентификаторов товаров</summary>
+        public List<int?> GetProductsIds();
     }
 }
