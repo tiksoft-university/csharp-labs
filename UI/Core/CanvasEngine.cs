@@ -5,8 +5,11 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace UI.Core
 {
+    
     public sealed class CanvasEngine
     {
+        private readonly static int WINDOW_HEIGHT_OFFSET = 1;
+
         /// <summary>Буферная матрица ячеек</summary>
         private Cell[,] _cellsMap;
 
@@ -19,8 +22,10 @@ namespace UI.Core
         public CanvasEngine()
         {
             Console.CursorVisible = false;
-            Height = Console.WindowHeight - 1;
+
+            Height = Console.WindowHeight - WINDOW_HEIGHT_OFFSET;
             Width = Console.WindowWidth;
+            
             _cellsMap = new Cell[Width, Height];
             Clear();
         }
@@ -32,7 +37,13 @@ namespace UI.Core
             {
                 for (int x = 0; x < Width; x++)
                 {                    
-                    SetCell(x, y, ' ', ConsoleColor.White, ConsoleColor.Black);
+                    SetCell(
+                        x, 
+                        y, 
+                        ' ', 
+                        ConsoleColor.White, 
+                        ConsoleColor.Black
+                    );
                 }                
             }
         }
@@ -45,7 +56,7 @@ namespace UI.Core
             var renderingX = x;
 
             for (int i = 0; i < text.Length; i++)
-            {
+            {                
                 if (text[i] == '\n')
                 {
                     if(renderingY < Height - 1) renderingY++;
@@ -53,13 +64,7 @@ namespace UI.Core
                     continue;
                 }
 
-                SetCell(
-                    renderingX++, 
-                    renderingY, 
-                    text[i],
-                    textColor,
-                    background
-                );
+                SetCell(renderingX++, renderingY, text[i], textColor, background);
             }
         }
 
@@ -91,7 +96,6 @@ namespace UI.Core
             if (!width.EndsWith("v")) return;
 
             int realWidth = (int)(Width * Int32.Parse(width.Replace("v", "")) / 100f);
-
             WriteBox(x, y, realWidth, height, title);
         }
 
@@ -100,7 +104,6 @@ namespace UI.Core
             if (!height.EndsWith("v")) return;
 
             int realHeight = (int)(Height * Int32.Parse(height.Replace("v", "")) / 100f);
-
             WriteBox(x, y, width, realHeight, title);
         }
 
@@ -110,16 +113,13 @@ namespace UI.Core
 
             int realWidth = (int)(Width * Int32.Parse(width.Replace("v", "")) / 100f);
             int realHeight = (int)(Height * Int32.Parse(height.Replace("v", "")) / 100f);
-
             WriteBox(x, y, realWidth, realHeight, title);
         }
 
 
         /// <summary>Рисует прямоугольник. Может иметь название</summary>
         private void WriteBox(int x, int y, int width, int height, string title = "") {
-  
-           
-
+            
             // Верхняя горизонтальная линия
             WriteLine(x + 1, y, width - 1);
             // Нижняя горизонтальная линия
@@ -169,7 +169,7 @@ namespace UI.Core
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
-                {
+                {   
                     bool needResetColor = false;
 
                     if (_cellsMap[x, y].BackgroundColor != ConsoleColor.Black)

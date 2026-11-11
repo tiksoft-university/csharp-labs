@@ -2,40 +2,42 @@
 using Products;
 using QR;
 using SmartStorage;
+using store_manager.UI;
 using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using UI;
 using UI.Core;
-using UI.SizeUnits;
 
 namespace StoreManager
 {
     internal class Program
     {       
-
-
         static void Main(string[] args)
         {
+
+            /* ###### STATE START ######*/
             IProduct packagedProd_1 = new Package(new PowerTool(5, "Интерскол У310", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));         
             IProduct packagedProd_2 = new Package(new PowerTool(6, "Интерскол У311", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));         
             IProduct packagedProd_3 = new Package(new PowerTool(7, "Интерскол У312", 10000, "Очень крутой инструмент, позволяющий делать отверстия"));
 
-            IProduct[] arr = [packagedProd_1, packagedProd_2, packagedProd_3]; 
-            var canv = new CanvasEngine();
-            int sas = 1;
-
+            IProduct[] arr = [packagedProd_1, packagedProd_2, packagedProd_3];
             int[] list = [1, 2, 3];
 
+            int sas = 1;
+            bool is_Adding = !false;
+            /* ###### STATE END ###### */
+
+
+            /* ###### COMPONENTS START ######*/
+            var canv = new CanvasEngine();
+            AssortmentsBar assortmentsBar = new(0, 0, 100, 21);
+           
             while (true)
             {
-
                 if (Console.KeyAvailable)
                 {
-                    // Аргумент true (intercept) запрещает консоли самой печатать 
-                    // нажатый символ на экране поверх твоих рамок
                     ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
-                    // Реакция на конкретные клавиши
                     switch (keyInfo.Key)
                     {
                         case ConsoleKey.A:
@@ -43,35 +45,23 @@ namespace StoreManager
                             break;
                         case ConsoleKey.D:
                             sas++;
-                            break;                        
+                            break;
                     }
                 }
-                //canv.WriteLine(0, 0, canv.Width);
-                //canv.WriteLine(0, 7, canv.Width);               
-                //canv.WriteText(3, 2, $"Витрина {sas}: [10] [11] [12] [13] [14] [-] [-] [-] [-] [14] [-] [14]");
-                //canv.WriteText(3, 3, "Витрина 2: [10] [11] [12] [13] [14] [-] [-] [-] [-] [14] [-] [14]");
-                //canv.WriteText(3, 4, "Витрина 3: [10] [11] [12] [13] [14] [-] [-] [-] [-] [14] [-] [14]");                               
-                //canv.WriteLine(0, 8, canv.Width / 2 - 1);
 
-                canv.DrawBox(0, 0, SizeUnits.Vw(100), SizeUnits.Vh(20), "Шапка");
+                // RENDER СЕКЦИИ СКЛАДОВ
+                assortmentsBar.Render(canv);
 
-                for (int i = 0; i < list.Length; i++)
-                {
-                    int textX = 5 * i + 2;
-                    int textY = 1;
-                    ConsoleColor color = i == sas ? ConsoleColor.Red : ConsoleColor.White;
-
-                    canv.WriteText(textX, textY, $"{10 + list[i]}", color);
+                if(is_Adding) {
+                    // СЕКЦИЯ СКЛАДОВ
+                    canv.DrawBox(0, Units.Vh(21) + 1, Units.Vw(70), Units.Vh(80) - 1, "ТЕКУЩИЙ ЭЛЕМЕНТ");
+                    canv.WriteText(3, Units.Vh(21) + 3, arr[sas].ToString());
                 }
-
-                canv.DrawBox(0, SizeUnits.Vh(20) + 1, SizeUnits.Vw(65), SizeUnits.Vh(80) - 1, "Тело_1");
-                canv.DrawBox(SizeUnits.Vw(65) + 1, SizeUnits.Vh(20) + 1, SizeUnits.Vw(65), SizeUnits.Vh(80) - 1, "Тело_1");
-
-                canv.WriteText(2, SizeUnits.Vh(20) + 3, arr[sas].ToString());
-
+                
+                canv.DrawBox(Units.Vw(70) + 1, Units.Vh(21) + 1, Units.Vw(65), Units.Vh(80) - 1, "ИНСТРУКЦИЯ");              
                 canv.Render();
-                canv.RefreshSize();           
-
+                canv.RefreshSize();
+              
             }
 
             //Console.CursorVisible = false;
