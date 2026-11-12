@@ -39,6 +39,7 @@ namespace store_manager.Model
         private readonly List<IAssortment<IProduct>> _data = new();
         private int _selectedAssortmentIndex = 0;
         private int _selectedProductIndex = 0;
+        private (int fromAssortmentIndex, int fromProductIndex) _transferingProduct = (-1, -1);
 
         public int SelectedAssortmentIndex
         {
@@ -66,21 +67,70 @@ namespace store_manager.Model
             _data = MockAssortmentsData.Get();
         }
         
-        /// <summary>Сортировка по Id</summary>
+        /// <summary>Сортировать по Id</summary>
         public void SortProductsById() => _data[SelectedAssortmentIndex]?.SortById();
 
-        /// <summary>Сортировка по имени</summary>
+        /// <summary>Сортировать по имени</summary>
         public void SortProductsByName() => _data[SelectedAssortmentIndex]?.SortByName();
 
-        /// <summary>Возвращает ссылку на экземпляр выбранной витрины</summary>
+        /// <summary>Получить выбранную витрину</summary>
         public IAssortment<IProduct>? GetSelectedAssortment() => _data[SelectedAssortmentIndex];
 
-        /// <summary>Возвращает ссылку на экземпляр выбранного товара</summary>
+        /// <summary>Получить выбранный товар</summary>
         public IProduct? GetSelectedProduct()
         {
             var selectedAssortment = GetSelectedAssortment();
             if (selectedAssortment is null) return null;
             return selectedAssortment.At(SelectedProductIndex);
+        }
+
+        /// <summary>Удалить выбранный товар</summary>
+        public void RemoveSelectedProduct()
+        {
+            var deleted = _data[SelectedAssortmentIndex][SelectedProductIndex];
+        }
+
+        /// <summary>Переместить/Обменять товар</summary>
+        public bool TransferProduct()
+        {
+            if (_transferingProduct == (-1, -1)) return false;
+            var selectedAssortment = GetSelectedAssortment();
+            IProduct? selectedProduct = GetSelectedProduct();
+
+            // Перенос/Обмен в рамках одной витрины
+            if (SelectedAssortmentIndex == _transferingProduct.fromAssortmentIndex)
+            {
+                var transferingProduct = _transferingProduct;
+                selectedAssortment?.Swap(_transferingProduct.fromProductIndex, SelectedProductIndex);
+                ResetTransfering();
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>Подготовить товар к перемещению/обмену</summary>
+        public bool ToggleTransfering()
+        {
+            var fromAssortment = GetSelectedAssortment();            
+            var transferingProduct = fromAssortment?.At(SelectedProductIndex);
+
+            if(transferingProduct is null) return false;
+
+            if(ProductIsTransfering(SelectedAssortmentIndex, SelectedProductIndex)) {
+                ResetTransfering(); return true;
+            }
+
+            _transferingProduct = (SelectedAssortmentIndex, SelectedProductIndex);
+            return true;
+        }
+
+        public void ResetTransfering() => _transferingProduct = (-1, -1);
+
+        /// <summary>Проверить, что товар зарезерирован под перемещение/обмен</summary>
+        public bool ProductIsTransfering(int assortmentIndex, int productIndex)
+        {
+            return (assortmentIndex, productIndex) == _transferingProduct;
         }
 
         /// <summary>Упаковать/Запаковать товар</summary>
@@ -113,25 +163,28 @@ namespace store_manager.Model
 
         public string GetStringifiedSelectedProduct()
         {
-            // TODO: ПЕРЕИСПОЛЬЗОВАТЬ GET_SELECTED_PRODUCT
+            // TODO: ПЕРЕИСПОЛЬЗОВАТЬ GET_SELECTED_PRODUCT           
             var selectedAssortment = _data[SelectedAssortmentIndex];                  
             if(selectedAssortment is null) return "Товар не найден";           
 
             IProduct? product = selectedAssortment.At(SelectedProductIndex);
 
-            if(product is null) return "В данной ячейке нет товара";
+            if(product is null) return $"Позиция: {SelectedAssortmentIndex}:{SelectedProductIndex}.\nТовар отсутствует.";
             return product.ToString()!;
         }
 
+        /// <summary>Проверить, что товар упакован</summary>
         public bool IsPackaged(int assortmentId, int productId)
         {
             var targetAssortment = _data.FirstOrDefault(asrt => asrt.Id == assortmentId);
             if(targetAssortment is null) return false;
             return targetAssortment.IsPackagedById(productId);
-        }        
+        }
 
+        /// <summary>Получить список иденификаторов витрин</summary>
         public List<int> GetAssortmentIds() => _data.Select(p => p.Id).ToList();
 
+        /// <summary>Получить список идентификаторов продуктов</summary>
         public List<int?> GetProductsIds(int id)
         {
             var assortment = _data.FirstOrDefault(p => p.Id == id);

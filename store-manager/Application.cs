@@ -6,7 +6,8 @@ namespace store_manager
 {
     enum AppState
     {
-        READING
+        READING,
+        TRANSFERING
     }
 
     internal class Application
@@ -34,36 +35,50 @@ namespace store_manager
                     switch (key.Key)
                     {
                         /* Изменение позиции просмариваемого товара в витрине */
-                        case ConsoleKey.A: 
-                            _assortmentsState.SelectedProductIndex--; 
-                            break;
-                        case ConsoleKey.D: 
-                            _assortmentsState.SelectedProductIndex++; 
-                            break;                        
+                        case ConsoleKey.A: _assortmentsState.SelectedProductIndex--; break;
+                        case ConsoleKey.D: _assortmentsState.SelectedProductIndex++; break;                        
 
                         /* Изменение позиции просматриваемой витрины */
-                        case ConsoleKey.W: 
-                            _assortmentsState.SelectedAssortmentIndex--; 
-                            break;
-                        case ConsoleKey.S: 
-                            _assortmentsState.SelectedAssortmentIndex++; 
-                            break;
+                        case ConsoleKey.W: _assortmentsState.SelectedAssortmentIndex--; break;
+                        case ConsoleKey.S: _assortmentsState.SelectedAssortmentIndex++; break;
 
                         /* Отсортировать по Id */
-                        case ConsoleKey.I:
-                            _assortmentsState.SortProductsById();
-                            break;
+                        case ConsoleKey.I: _assortmentsState.SortProductsById(); break;
                         /* Отсортировать по Имени */
-                        case ConsoleKey.O:
-                            _assortmentsState.SortProductsByName();
-                            break;
+                        case ConsoleKey.O: _assortmentsState.SortProductsByName(); break;
 
                         /* Упаковать/Распаковать */
-                        case ConsoleKey.B:
-                            _assortmentsState.TogglePackage();
+                        case ConsoleKey.B: _assortmentsState.TogglePackage(); break;
+
+                         /* Удалить товар*/
+                        case ConsoleKey.R: _assortmentsState.RemoveSelectedProduct(); break;
+
+                        /* Выбрать перемещяемый/обменяемый товар*/
+                        case ConsoleKey.X:
+                            if (_assortmentsState.ToggleTransfering()) _appState = AppState.TRANSFERING;
+                            break;                           
+                    }
+                    break;
+                case AppState.TRANSFERING:
+                    switch (key.Key)
+                    {
+                        /* Изменение позиции просмариваемого товара в витрине */
+                        case ConsoleKey.A: _assortmentsState.SelectedProductIndex--; break;
+                        case ConsoleKey.D: _assortmentsState.SelectedProductIndex++; break;
+
+                        /* Изменение позиции просматриваемой витрины */
+                        case ConsoleKey.W: _assortmentsState.SelectedAssortmentIndex--; break;
+                        case ConsoleKey.S: _assortmentsState.SelectedAssortmentIndex++; break;
+                      
+                        /* Выбрать перемещяемый/обменяемый товар*/
+                        case ConsoleKey.X: 
+                            if(_assortmentsState.ToggleTransfering()) _appState = AppState.READING;
                             break;
 
-
+                        /* Выполнить перемещение/обмен*/
+                        case ConsoleKey.V:
+                            if (_assortmentsState.TransferProduct()) _appState = AppState.READING;
+                            break;
                     }
                     break;
                 default:
@@ -75,13 +90,17 @@ namespace store_manager
         {
             while (true)
             {
-
-                _canvas.Clear();
-                _topPanel.Render(_canvas);
-              
                 var topPanelBounds = _topPanel.GetBounds();
+                _canvas.Clear();
+                
+                // Динамический расчёт положения и размеров HelpPanel 
+                _helpPanel.SetPositionAndSize(
+                    topPanelBounds.Right + 1, topPanelBounds.Bottom + 1, 
+                    30, 80
+                );
 
-                _helpPanel.SetPositionAndSize(topPanelBounds.Right + 1, topPanelBounds.Bottom + 1, 30, 80);
+                // Отрисовка всех секций
+                _topPanel.Render(_canvas);
                 _helpPanel.Render(_canvas);
 
                 _canvas.DrawBox(_topPanel.GetBounds().Right + 1, 0, Units.Vw(30), _topPanel.Height, "ДОПОЛНИТЕЛЬНО");

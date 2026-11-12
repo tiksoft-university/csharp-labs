@@ -12,7 +12,7 @@ namespace store_manager.UI
             _state = state;
         }
 
-        private void RenderProducts(CanvasEngine canvas, int offsetX, int offsetY, int assortmentId, bool isInSelected)
+        private void RenderProducts(CanvasEngine canvas, int offsetX, int offsetY, int assortmentId, bool isInSelected, int assortmentIndex)
         {
             var productsIds = _state.GetProductsIds(assortmentId);
             if (productsIds.Count == 0) return;
@@ -21,8 +21,13 @@ namespace store_manager.UI
             {
                 var productX = offsetX + 6 * (i + 1);
                 var isSelected = isInSelected && _state.SelectedProductIndex == i;
+                var isTransfering = _state.ProductIsTransfering(assortmentIndex, i);
 
-                ConsoleColor productBg = isSelected ? ConsoleColor.DarkGreen : ConsoleColor.Black;
+                ConsoleColor productBg = ConsoleColor.Black;
+                
+                if(isTransfering) productBg = ConsoleColor.DarkYellow;
+                else if(isSelected) productBg = ConsoleColor.DarkGreen;
+                
 
                 var productId = productsIds[i];
                 var productIsNull = productId is null;
@@ -54,7 +59,7 @@ namespace store_manager.UI
 
                 ConsoleColor assortmentTitleColor = isSelected ? ConsoleColor.Magenta : ConsoleColor.White; 
                 canvas.WriteText(assortmentX, assortmentY, assortmentText, assortmentTitleColor);
-                RenderProducts(canvas, assortmentText.Length, assortmentY, assortmentId, isSelected);              
+                RenderProducts(canvas, assortmentText.Length, assortmentY, assortmentId, isSelected, i);              
             }
         }
 
