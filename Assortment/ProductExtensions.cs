@@ -11,7 +11,7 @@ namespace Assortment
         {
             if (product == null || assortmentId < 0 || index < 0) return;
 
-            product.QRCode.Text = $"{assortmentId}:{index}:{product.Id}:{product.Price}";
+            product.QRCode.Text = $"{assortmentId}:{index}:{product.Id}:{product.Price:F1}";
         }
 
         /// <summary>
@@ -21,9 +21,8 @@ namespace Assortment
             where T : class, IProduct
         {
             if (product == null) return;
-            
-            var index = assortment.IndexOf(product);
 
+            var index = assortment.IndexOf(product);
             product.SetAssortmentCode(assortment.Id, index);
         }
     }

@@ -12,21 +12,31 @@ namespace store_manager.UI
             _state = state;
         }
 
-        private void RenderProducts(CanvasEngine canvas, int offsetX, int offsetY, int assortmentId)
+        private void RenderProducts(CanvasEngine canvas, int offsetX, int offsetY, int assortmentId, bool isInSelected)
         {
             var productsIds = _state.GetProductsIds(assortmentId);
             if (productsIds.Count == 0) return;
 
-            bool isSelectedAssortment = _state.GetSelectedAssortmentId() == assortmentId;
-
-
             for (int i = 0; i < productsIds.Count; i++)
             {
-                int productX = offsetX + 4 * (i + 1);
-                bool isSelected = isSelectedAssortment && _state.SelectedProductIndex == i;
+                var productX = offsetX + 6 * (i + 1);
+                var isSelected = isInSelected && _state.SelectedProductIndex == i;
 
                 ConsoleColor productBg = isSelected ? ConsoleColor.DarkGreen : ConsoleColor.Black;
-                var productText = productsIds[i] is null ? "__" : productsIds[i].ToString();
+
+                var productId = productsIds[i];
+                var productIsNull = productId is null;
+                
+                var isPackaged = productIsNull ? false : _state.IsPackaged(assortmentId, (int)productId!);
+                var productText = "";
+               
+                if (productIsNull) productText = "__";
+                else if (isPackaged)
+                {
+                    productX -= 1;
+                    productText = $"[{productId.ToString()}]";
+                }
+                else productText = productId.ToString();
 
                 canvas.WriteText(productX, offsetY, productText, ConsoleColor.White, productBg);
             }
@@ -36,24 +46,22 @@ namespace store_manager.UI
         { 
             for (int i = 0; i < assortmentsIds.Count; i++)
             {
-                int assortmentX = X + _padding;
-                int assortmentY = Y + _padding + i;
-                int assortmentId = assortmentsIds[i];
-                
-                string assortmentText = $"ВИТРИНА {assortmentId}:";
-                bool isSelected = _state.GetSelectedAssortmentId() == assortmentId;
-                ConsoleColor assortmentTitleColor = isSelected ? ConsoleColor.Magenta : ConsoleColor.White; 
+                var assortmentX = X + _padding;
+                var assortmentY = Y + _padding + i;
+                var assortmentId = assortmentsIds[i];               
+                var assortmentText = $"ВИТРИНА {assortmentId}:";
+                var isSelected = _state.SelectedAssortmentIndex == i;
 
+                ConsoleColor assortmentTitleColor = isSelected ? ConsoleColor.Magenta : ConsoleColor.White; 
                 canvas.WriteText(assortmentX, assortmentY, assortmentText, assortmentTitleColor);
-                RenderProducts(canvas, assortmentText.Length, assortmentY, assortmentId);              
+                RenderProducts(canvas, assortmentText.Length, assortmentY, assortmentId, isSelected);              
             }
         }
 
         public override void Render(CanvasEngine canvas)
         {
             var assortmentsIds = _state.GetAssortmentIds();
-            var assortmentsMaxCount = _state.GetAssortmentsMaxCount();
-            canvas.DrawBox(X, Y, Width, Height, $"ВИТРИНЫ (МАКСИМУМ {assortmentsMaxCount})");            
+            canvas.DrawBox(X, Y, Width, Height, $"СПИСОК ВИТРИН");            
 
             if (assortmentsIds.Count == 0)
             {

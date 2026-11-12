@@ -41,7 +41,7 @@ namespace Products
         /// <summary>
         /// Обновление инфы в QR-коде
         /// </summary>
-        protected virtual void UpdateQr() => _qr.Text = $"{_id}:{_price}";
+        protected virtual void UpdateQr() => _qr.Text = $"{_id}:{_price:F1}";
 
         /// <summary>
         /// Установка/Получение ID
@@ -83,7 +83,7 @@ namespace Products
 
         public override string ToString()
         {
-            return $"{Type} {Name} {Price}руб\nОписание: {Info}\n{QRCode}";
+            return $"{Type} {Name} {Price:F1} руб\nОписание: {Info}\n{QRCode}";
         }
     }
 }

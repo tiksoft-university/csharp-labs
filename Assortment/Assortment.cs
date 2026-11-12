@@ -47,7 +47,7 @@ namespace Assortment
                 // Если индекс выходит за пределы
                 if (IsOutOfArray(index) || this[index] != null || _items[index] == value || value is null) return;
                 _items[index] = value;
-                //UpdateAllCodes();
+                UpdateAllCodes();
             }
         }
 
@@ -57,6 +57,8 @@ namespace Assortment
             if (IsOutOfArray(index) || _items[index] == null) return null;
             return _items[index];
         }
+
+        public bool IsPackagedById(int id) => Find(id) is Package;        
 
         /// <summary>Размер склада</summary>
         public int Size { get => _items.Length; }
@@ -118,10 +120,7 @@ namespace Assortment
 
             for (int i = 0; i < Size; i++)
             {
-                T getted = this[i];
-                this[i] = getted;
-
-                if (getted == item) {
+                if (At(i) == item) {
                     resultIndex = i;
                     break;
                 }

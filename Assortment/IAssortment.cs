@@ -47,5 +47,8 @@
 
         /// <summary>Получить список идентификаторов товаров</summary>
         public List<int?> GetProductsIds();
+
+        /// <summary>Является ли товар упакованным</summary>
+        public bool IsPackagedById(int id);
     }
 }

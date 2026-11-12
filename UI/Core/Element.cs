@@ -28,20 +28,27 @@ namespace UI.Core
         
         protected Element(int x, int y,  int width, int height)
         {
-            X = x; 
-            Y = y;
-            _width = width; 
-            _height = height;
+            SetPositionAndSize(x, y, width, height);
         }
 
         public int X { get; set; } 
         public int Y { get; set; }
+
+        public void SetPositionAndSize(int x, int y, int width, int height)
+        {
+            X = x;
+            Y = y;
+            _width = width;
+            _height = height;
+        }
+
         public int Height { 
-            get {
+            get 
+            {
                 if(!SizeIsDynamic) return _height;
                 return Units.Vh(_height);
             } 
-            init; 
+            set => _height = value; 
         }
         public int Width
         {
@@ -50,8 +57,9 @@ namespace UI.Core
                 if (!SizeIsDynamic) return _width;
                 return Units.Vw(_width);
             }
-            init;
+            set => _width = value;
         }
+
         protected bool SizeIsDynamic { get; init; } = true;
         public Bounds GetBounds() => new Bounds(X, Y, Width, Height);
 

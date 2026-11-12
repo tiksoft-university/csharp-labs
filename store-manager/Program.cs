@@ -22,13 +22,6 @@ namespace StoreManager
 
 
 
-
-
-
-
-
-
-
             //Console.CursorVisible = false;
 
             //while (true)

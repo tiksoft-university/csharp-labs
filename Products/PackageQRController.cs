@@ -30,7 +30,7 @@ namespace Products
         public override string ToString() => IQRController.OUTPUT_MODE switch
         {
             OutputMode.Text => $"*{Text}*",
-            OutputMode.Full => $"*{this.Text}*\n" + $"{this.Code}",
+            OutputMode.Full => $"*{this.Text}*\n\n" + $"{this.Code}",
             _ => Code
         };
     }
