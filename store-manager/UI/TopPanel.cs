@@ -3,11 +3,11 @@ using UI.Core;
 
 namespace store_manager.UI
 {
-    internal sealed class AssortmentsBar : Element
+    internal sealed class TopPanel : Element
     {
         private readonly AssortmentsSlice _state;
         
-        public AssortmentsBar(int x, int y, int w, int h, AssortmentsSlice state) : base(x, y, w, h) 
+        public TopPanel(int x, int y, int w, int h, AssortmentsSlice state) : base(x, y, w, h) 
         {
             _state = state;
         }
@@ -16,13 +16,19 @@ namespace store_manager.UI
         {
             var productsIds = _state.GetProductsIds(assortmentId);
             if (productsIds.Count == 0) return;
-                      
+
+            bool isSelectedAssortment = _state.GetSelectedAssortmentId() == assortmentId;
+
+
             for (int i = 0; i < productsIds.Count; i++)
             {
                 int productX = offsetX + 4 * (i + 1);
-                bool isSelected = _state.GetSelectedAssortmentId() == assortmentId && _state.GetSelectedProductId() == productsIds[i];
+                bool isSelected = isSelectedAssortment && _state.SelectedProductIndex == i;
+
                 ConsoleColor productBg = isSelected ? ConsoleColor.DarkGreen : ConsoleColor.Black;
-                canvas.WriteText(productX, offsetY, $"{productsIds[i]}", ConsoleColor.White, productBg);
+                var productText = productsIds[i] is null ? "__" : productsIds[i].ToString();
+
+                canvas.WriteText(productX, offsetY, productText, ConsoleColor.White, productBg);
             }
         }
 

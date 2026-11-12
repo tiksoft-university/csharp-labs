@@ -8,6 +8,7 @@ namespace UI.Core
     
     public sealed class CanvasEngine
     {
+        /// <summary>Смещение для ограничения высоты</summary>
         private readonly static int WINDOW_HEIGHT_OFFSET = 1;
 
         /// <summary>Буферная матрица ячеек</summary>
@@ -19,13 +20,12 @@ namespace UI.Core
         /// <summary>Ширина холста</summary>
         public int Width { get; private set; }
 
+        /// <summary>Создание экземпляра холста</summary>
         public CanvasEngine()
         {
             Console.CursorVisible = false;
-
             Height = Console.WindowHeight - WINDOW_HEIGHT_OFFSET;
-            Width = Console.WindowWidth;
-            
+            Width = Console.WindowWidth;            
             _cellsMap = new Cell[Width, Height];
             Clear();
         }
@@ -33,6 +33,7 @@ namespace UI.Core
         /// <summary>Очистка буфера. Заполняет матрицу пробелами</summary>
         public void Clear()
         {
+
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
@@ -85,31 +86,6 @@ namespace UI.Core
 
         /// <summary>Рисует прямоугольник. Может иметь название</summary>
         public void DrawBox(int x, int y, int width, int height, string title = "") => WriteBox(x, y, width, height, title);        
-        public void DrawBox(int x, int y, string width, int height, string title = "")
-        {
-            if (!width.EndsWith("v")) return;
-
-            int realWidth = (int)(Width * Int32.Parse(width.Replace("v", "")) / 100f);
-            WriteBox(x, y, realWidth, height, title);
-        }
-
-        public void DrawBox(int x, int y, int width, string height, string title = "")
-        {
-            if (!height.EndsWith("v")) return;
-
-            int realHeight = (int)(Height * Int32.Parse(height.Replace("v", "")) / 100f);
-            WriteBox(x, y, width, realHeight, title);
-        }
-
-        public void DrawBox(int x, int y, string width, string height, string title = "")
-        {
-            if (!height.EndsWith("v") || !width.EndsWith("v")) return;
-
-            int realWidth = (int)(Width * Int32.Parse(width.Replace("v", "")) / 100f);
-            int realHeight = (int)(Height * Int32.Parse(height.Replace("v", "")) / 100f);
-            WriteBox(x, y, realWidth, realHeight, title);
-        }
-
 
         /// <summary>Рисует прямоугольник. Может иметь название</summary>
         private void WriteBox(int x, int y, int width, int height, string title = "") {
@@ -132,8 +108,9 @@ namespace UI.Core
                 WriteText(x + 3, y, title, ConsoleColor.Black, ConsoleColor.Cyan);
             }                        
         }
-               
-        public void SetCell(int x, int y, char value, ConsoleColor textColor = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black) 
+        
+        
+        private void SetCell(int x, int y, char value, ConsoleColor textColor = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black) 
         {
             if (x < 0) x = 0; if (x >= Width) x = Width - 1;
             if (y < 0) y = 0;  if (y >= Height) y = Height - 1;
@@ -152,41 +129,41 @@ namespace UI.Core
             if (sizeNotChanged) return;
 
             Width = newWidth; Height = newHeight;         
-            _cellsMap = new Cell[newWidth, newHeight];
-            Clear();           
+            _cellsMap = new Cell[newWidth, newHeight];           
+        }
+
+        private bool CellIsDefaultColor(ref Cell cell)
+        {
+            ConsoleColor cellBg = cell.BackgroundColor;
+            ConsoleColor cellColor = cell.TextColor;
+            return cellBg == ConsoleColor.Black && cellColor == ConsoleColor.White;
         }
 
         public void Render()
-        {           
-            Console.SetCursorPosition(0, 0);
+        {
+            Console.SetCursorPosition(0, 0);            
 
             for (int y = 0; y < Height; y++)
             {
                 for (int x = 0; x < Width; x++)
                 {   
-                    bool needResetColor = false;
+                    
+                    bool colorsIsDefault = CellIsDefaultColor(ref _cellsMap[x, y]);
 
-                    if (_cellsMap[x, y].BackgroundColor != ConsoleColor.Black)
+                    if(colorsIsDefault)
                     {
-                        Console.BackgroundColor = _cellsMap[x, y].BackgroundColor;
-                        needResetColor = true;
+                        Console.Write(_cellsMap[x, y]);
+                        continue;
                     }
 
-                    if (_cellsMap[x, y].TextColor != ConsoleColor.White)
-                    {
-                        Console.ForegroundColor = _cellsMap[x, y].TextColor;
-                        needResetColor = true;
-                    }
-
+                    Console.ForegroundColor = _cellsMap[x, y].TextColor;
+                    Console.BackgroundColor = _cellsMap[x, y].BackgroundColor;
+                   
                     Console.Write(_cellsMap[x, y]);
 
-                    if(needResetColor )
-                    {
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }                                       
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = ConsoleColor.White;                                    
                 }
-
                 Console.WriteLine();
             }            
         }

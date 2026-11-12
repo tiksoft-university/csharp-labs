@@ -14,6 +14,10 @@
         /// <summary> Индексатор для товара </summary>
         public T? this[int index] { get; set; }
 
+
+        /// <summary> Чтение товара без удаления</summary>
+        public T? At(int index);
+
         /// <summary> Добавление товара в первую пустую ячейку </summary>
         public bool Add(T item);
       

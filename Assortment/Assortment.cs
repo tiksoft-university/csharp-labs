@@ -51,6 +51,13 @@ namespace Assortment
             }
         }
 
+
+        public T? At(int index)
+        {
+            if (IsOutOfArray(index) || _items[index] == null) return null;
+            return _items[index];
+        }
+
         /// <summary>Размер склада</summary>
         public int Size { get => _items.Length; }
 

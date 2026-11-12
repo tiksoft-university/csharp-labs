@@ -11,9 +11,10 @@ namespace store_manager.Model
             
             Assortment<IProduct> assortment_1 = (1, 10);
             Assortment<IProduct> assortment_2 = (2, 10);
+            Assortment<IProduct> assortment_3 = (3, 10);
             
             mockData.Add(assortment_1);
-            assortment_1.Add(new PowerTool(14, "Товар_14", 1000, "Описание 1"));
+            assortment_1.Add(new PowerTool(145, "Товар_14", 1000, "Описание 1"));
             assortment_1.Add(new PowerTool(12, "Товар_12", 1000, "Описание 1"));
             assortment_1.Add(new PowerTool(15, "Товар_15", 1000, "Описание 1"));
             assortment_1.Add(new PowerTool(17, "Товар_17", 1000, "Описание 1"));       
@@ -31,26 +32,28 @@ namespace store_manager.Model
     {
         private const int ASSORTMENTS_MAX_COUNT = 3;
         private int? _selectedAssortmentId = null;
-        private int? _selectedProductId = 15;
+        private int? _selectedProductId = null;
+        public int SelectedProductIndex { get; set; }
+        public int SelectedAssortmentIndex { get; set; }
         private List<IAssortment<IProduct>> _data = new();
 
         public AssortmentsSlice()
         {
             _data = MockAssortmentsData.Get();
             SetSelectedAssortmentId(1);
-        }
+            SelectedProductIndex = 8;
+        }       
 
-        public string GetSelectedProductString()
+        public string GetStringifiedSelectedProduct()
         {
-            if(_selectedProductId is null || _selectedAssortmentId is null) return "Товар не найден";
+            if(_selectedAssortmentId is null) return "Товар не найден";
 
             var selectedAssortment = _data.FirstOrDefault(assortment => assortment.Id == _selectedAssortmentId);            
             if(selectedAssortment is null) return "Товар не найден";           
 
-            int productId = (int)_selectedProductId;
-            IProduct? product = selectedAssortment.Find(productId);
+            IProduct? product = selectedAssortment.At(SelectedProductIndex);
 
-            if(product is null) return "Товар не найден";
+            if(product is null) return "В данной ячейке нет товара";
             return product.ToString()!;
         }
 
