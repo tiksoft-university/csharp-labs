@@ -95,17 +95,19 @@ namespace store_manager.Model
         {
             if (_transferingProduct == (-1, -1)) return false;
             var selectedAssortment = GetSelectedAssortment();
-            IProduct? selectedProduct = GetSelectedProduct();
 
             // Перенос/Обмен в рамках одной витрины
             if (SelectedAssortmentIndex == _transferingProduct.fromAssortmentIndex)
-            {
-                var transferingProduct = _transferingProduct;
+            {           
                 selectedAssortment?.Swap(_transferingProduct.fromProductIndex, SelectedProductIndex);
                 ResetTransfering();
                 return true;
             }
+            
+            // Перенос/Обмен в рамках разных витрин
 
+            // ДОБАВИТЬ
+            
             return false;
         }
 

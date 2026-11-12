@@ -1,14 +1,4 @@
-﻿using Assortment;
-using Products;
-using QR;
-using SmartStorage;
-using store_manager;
-using store_manager.Model;
-using store_manager.UI;
-using System.Runtime.CompilerServices;
-using System.Security.Principal;
-using UI;
-using UI.Core;
+﻿using store_manager;
 
 namespace StoreManager
 {
