@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.Text;
 
 namespace UI.Core
 {
@@ -43,8 +40,7 @@ namespace UI.Core
             }
         }
 
-        /// <summary>Рисует текст на заданных координатах</summary>
-        
+        /// <summary>Рисует текст на заданных координатах</summary>        
         public void WriteText(int x, int y, string text, ConsoleColor textColor = ConsoleColor.White, ConsoleColor background = ConsoleColor.Black)
         {
             var renderingY = y;

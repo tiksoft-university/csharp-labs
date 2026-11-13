@@ -4,34 +4,30 @@ using UI.Core;
 
 namespace store_manager
 {
-    enum AppState
-    {
-        READING,
-        TRANSFERING
-    }
-
     internal class Application
     {
         // STATE
         private readonly AssortmentsSlice _assortmentsState = new();
-        private AppState _appState = AppState.READING;
+        private AppModeSlice _appMode = new();
 
         // UI
         private readonly CanvasEngine _canvas = new();
         private readonly TopPanel _topPanel;
+        private readonly ProductLayout _productLayoutPanel;
         private readonly HelpPanel _helpPanel;
 
         public Application()
         {
             _topPanel = new(0, 0, 70, 21, _assortmentsState);
-            _helpPanel = new(0, 21 + 1, 30, 79);
+            _productLayoutPanel = new(0, 22, 70, 79, _assortmentsState, _appMode);
+            _helpPanel = new(0, 22, 30, 79);
         }
 
         private void KeyboardStateMachineHandle(ConsoleKeyInfo key)
         {
-            switch (_appState)
+            switch (_appMode.State)
             {
-                case AppState.READING:
+                case AppMode.READING:
                     switch (key.Key)
                     {
                         /* Изменение позиции просмариваемого товара в витрине */
@@ -55,11 +51,14 @@ namespace store_manager
 
                         /* Выбрать перемещяемый/обменяемый товар*/
                         case ConsoleKey.X:
-                            if (_assortmentsState.ToggleTransfering()) _appState = AppState.TRANSFERING;
-                            break;                           
+                            if (_assortmentsState.ToggleTransfering()) _appMode.State = AppMode.TRANSFERING;
+                            break;
+
+                        /* Добавить/Заменить товар */
+                        case ConsoleKey.N: _appMode.State = AppMode.REPLACING; break;
                     }
                     break;
-                case AppState.TRANSFERING:
+                case AppMode.TRANSFERING:
                     switch (key.Key)
                     {
                         /* Изменение позиции просмариваемого товара в витрине */
@@ -72,14 +71,17 @@ namespace store_manager
                       
                         /* Выбрать перемещяемый/обменяемый товар*/
                         case ConsoleKey.X: 
-                            if(_assortmentsState.ToggleTransfering()) _appState = AppState.READING;
+                            if(_assortmentsState.ToggleTransfering()) _appMode.State = AppMode.READING;
                             break;
 
                         /* Выполнить перемещение/обмен*/
                         case ConsoleKey.V:
-                            if (_assortmentsState.TransferProduct()) _appState = AppState.READING;
+                            if (_assortmentsState.TransferProduct()) _appMode.State = AppMode.READING;
                             break;
                     }
+                    break;                
+                case AppMode.REPLACING:
+                    _productLayoutPanel.HandleKeyboard(key);
                     break;
                 default:
                     break;
@@ -94,22 +96,27 @@ namespace store_manager
                 _canvas.Clear();
                 
                 // Динамический расчёт положения и размеров HelpPanel 
-                _helpPanel.SetPositionAndSize(
+                _helpPanel.UpdateBounds(
                     topPanelBounds.Right + 1, topPanelBounds.Bottom + 1, 
                     30, 80
+                );
+                // Динамический расчёт положения и размеров HelpPanel 
+                _productLayoutPanel.UpdateBounds(
+                    0, topPanelBounds.Bottom + 1,
+                    70, 80
                 );
 
                 // Отрисовка всех секций
                 _topPanel.Render(_canvas);
                 _helpPanel.Render(_canvas);
-
+                _productLayoutPanel.Render(_canvas);
                 _canvas.DrawBox(_topPanel.GetBounds().Right + 1, 0, Units.Vw(30), _topPanel.Height, "ДОПОЛНИТЕЛЬНО");
 
 
                 //_canvas.DrawBox(Units.Vw(70) + 1, 0, Units.Vw(65), Units.Vh(80) - 1, "ИНСТРУКЦИЯ ПО ИСПОЛЬЗОВАНИЮ");
 
-                _canvas.DrawBox(0, Units.Vh(21) + 1, Units.Vw(70), Units.Vh(80) - 1, "ИНФОРМАЦИЯ О ТОВАРЕ");
-                _canvas.WriteText(3, Units.Vh(21) + 3, _assortmentsState.GetStringifiedSelectedProduct());
+                //_canvas.DrawBox(0, Units.Vh(21) + 1, Units.Vw(70), Units.Vh(80) - 1, "ИНФОРМАЦИЯ О ТОВАРЕ");
+                //_canvas.WriteText(3, Units.Vh(21) + 3, _assortmentsState.GetStringifiedSelectedProduct());
              
                 _canvas.Render();
                 _canvas.RefreshSize();

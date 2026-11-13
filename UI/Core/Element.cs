@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace UI.Core
+﻿namespace UI.Core
 {
     public readonly struct Bounds
     {
@@ -28,19 +24,12 @@ namespace UI.Core
         
         protected Element(int x, int y,  int width, int height)
         {
-            SetPositionAndSize(x, y, width, height);
+            UpdateBounds(x, y, width, height);
         }
 
         public int X { get; set; } 
         public int Y { get; set; }
-
-        public void SetPositionAndSize(int x, int y, int width, int height)
-        {
-            X = x;
-            Y = y;
-            _width = width;
-            _height = height;
-        }
+        protected bool SizeIsDynamic { get; init; } = true;
 
         public int Height { 
             get 
@@ -60,15 +49,14 @@ namespace UI.Core
             set => _width = value;
         }
 
-        protected bool SizeIsDynamic { get; init; } = true;
-        public Bounds GetBounds() => new Bounds(X, Y, Width, Height);
+        public void UpdateBounds(int x, int y, int width, int height)
+        {
+            if (X == x && Y == y && width == _width && height == _height) return;
+            X = x; Y = y;
+            _width = width; _height = height;
+        }
 
-        //public void ChangeSize(int height, int width)
-        //{
-        //    if (Width == width && Height == height) return;
-        //    Height = height;
-        //    Width = width;
-        //}
+        public Bounds GetBounds() => new Bounds(X, Y, Width, Height);
 
         public abstract void Render(CanvasEngine canvas);
     }

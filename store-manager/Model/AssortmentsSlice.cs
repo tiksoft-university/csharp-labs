@@ -37,9 +37,16 @@ namespace store_manager.Model
     internal sealed class AssortmentsSlice
     {
         private readonly List<IAssortment<IProduct>> _data = new();
+
         private int _selectedAssortmentIndex = 0;
         private int _selectedProductIndex = 0;
         private (int fromAssortmentIndex, int fromProductIndex) _transferingProduct = (-1, -1);
+
+        public AssortmentsSlice()
+        {
+            _data = MockAssortmentsData.Get();
+        }
+
 
         public int SelectedAssortmentIndex
         {
@@ -60,12 +67,7 @@ namespace store_manager.Model
                 if(value > _data[SelectedAssortmentIndex].Size - 1) return;
                 _selectedProductIndex = value;
             }
-        }
- 
-        public AssortmentsSlice()
-        {
-            _data = MockAssortmentsData.Get();
-        }
+        }      
         
         /// <summary>Сортировать по Id</summary>
         public void SortProductsById() => _data[SelectedAssortmentIndex]?.SortById();
@@ -94,6 +96,8 @@ namespace store_manager.Model
         public bool TransferProduct()
         {
             if (_transferingProduct == (-1, -1)) return false;
+            if (_transferingProduct == (_selectedAssortmentIndex, _selectedProductIndex)) return false;
+
             var selectedAssortment = GetSelectedAssortment();
 
             // Перенос/Обмен в рамках одной витрины
@@ -103,12 +107,16 @@ namespace store_manager.Model
                 ResetTransfering();
                 return true;
             }
-            
-            // Перенос/Обмен в рамках разных витрин
 
-            // ДОБАВИТЬ
-            
-            return false;
+            // Перенос/Обмен в рамках разных витрин
+            var sourceProduct = _data[_transferingProduct.fromAssortmentIndex][_transferingProduct.fromProductIndex];
+            var destinationProduct = _data[_selectedAssortmentIndex][_selectedProductIndex];
+
+            _data[_transferingProduct.fromAssortmentIndex][_transferingProduct.fromProductIndex] = destinationProduct;
+            _data[_selectedAssortmentIndex][_selectedProductIndex] = sourceProduct;
+
+            ResetTransfering();
+            return true;
         }
 
         /// <summary>Подготовить товар к перемещению/обмену</summary>
