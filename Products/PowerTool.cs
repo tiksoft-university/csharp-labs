@@ -18,6 +18,7 @@ namespace Products
         /// Информация о товаре
         /// </summary>
         private string _info;
+        private int v;
 
         /// <summary>
         ///  Конструктор продукта

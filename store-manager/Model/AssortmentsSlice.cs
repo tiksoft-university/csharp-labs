@@ -92,6 +92,13 @@ namespace store_manager.Model
             var deleted = _data[SelectedAssortmentIndex][SelectedProductIndex];
         }
 
+
+        public void ReplaceSelectedProduct(IProduct product)
+        {
+            var selectedAssortment = GetSelectedAssortment();
+            selectedAssortment?.Replace(SelectedProductIndex, product);
+        }
+
         /// <summary>Переместить/Обменять товар</summary>
         public bool TransferProduct()
         {

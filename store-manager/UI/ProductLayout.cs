@@ -10,18 +10,19 @@ namespace store_manager.UI
     {
         private readonly AssortmentsSlice _assortments;
         private readonly AppModeSlice _appMode;
+
         private readonly ProductInfo _infoScreen;
-        //private Element _current; 
+        private readonly ProductForm _formScreen;
 
         public ProductLayout(int x, int y, int width, int height, AssortmentsSlice assortments, AppModeSlice appMode) : base(x, y, width, height)
         {
+            int layoutX = X + _padding;
+            int layoutY = Y + _padding;
+
             _assortments = assortments;
             _appMode = appMode;
-            _infoScreen = new(
-                X + _padding,
-                Y + _padding,
-                0, 0, _assortments
-            );
+            _infoScreen = new(layoutX, layoutY ,0, 0, _assortments);
+            _formScreen = new(layoutX, layoutY, 0, 0, _assortments, _appMode);
         }
 
         private string GetCurrentTitle() => _appMode.State switch
@@ -31,34 +32,23 @@ namespace store_manager.UI
         };
 
         public void HandleKeyboard(ConsoleKeyInfo key)
-        {
-           
-
+        {          
             if (_appMode.State != AppMode.REPLACING) return;
-            
-            // ЗАСУНУТЬ В PRODUCTFORM
-            if (key.Key == ConsoleKey.Escape)
-            {
-                _appMode.State = AppMode.READING;
-                return;
-            }
-            Console.WriteLine(key.Key);
+            _formScreen.HandleKeyboard(key);            
         }
 
-        
-        private void ConditionalRender(CanvasEngine canvas)
+        private void RenderCurrent(CanvasEngine canvas, Element element)
         {
-            if (_appMode.State == AppMode.REPLACING) return;
-
-            // Рендер ProductInfo
-            _infoScreen.UpdateBounds(X + _padding, Y + _padding, Width, Height);
-            _infoScreen.Render(canvas);
+            element.UpdateBounds(X + _padding, Y + _padding, Width, Height);
+            element.Render(canvas);
         }
             
         public override void Render(CanvasEngine canvas)
         {
             canvas.DrawBox(X, Y, Width, Height, GetCurrentTitle());
-            ConditionalRender(canvas);                       
+
+            Element current = _appMode.State == AppMode.REPLACING ? _formScreen : _infoScreen;
+            RenderCurrent(canvas, current);
         }
     }
 }
